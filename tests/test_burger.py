@@ -1,10 +1,8 @@
 import pytest
 import allure
-import random
 from unittest.mock import Mock 
 
 from praktikum.burger import Burger
-import praktikum.ingredient_types as it
 from helpers import CreateObject
 
 
@@ -90,12 +88,26 @@ class TestBurger:
         burger = Burger()
         burger.bun = mock_bun
         burger.ingredients = ingrs_moks
-        receipt_str = burger.get_receipt()
-        receipt_list = receipt_str.split('\n')
-        receipt_price = mock_bun.price*2 + CreateObject.calculate_price_list_ingredients(ingrs_moks)
-        assert \
-            (len(receipt_list) == (num_ingr+2+2)) and \
-            (receipt_list[-1] == f'Price: {receipt_price}')
+        burger_price_to_be = mock_bun.price*2 + CreateObject.calculate_price_list_ingredients(ingrs_moks)
+
+        receipt_from_classBurger = burger.get_receipt()
+
+        receipt_to_be = f'(==== {mock_bun.name} ====)\n'
+        for ingr in ingrs_moks:
+            receipt_to_be += f'= {ingr.type.lower()} {ingr.name} =\n'
+        receipt_to_be += f'(==== {mock_bun.name} ====)\n\n'
+        receipt_to_be += f'Price: {burger_price_to_be}' 
+
+        
+        assert (receipt_from_classBurger == receipt_to_be)
 
 
 
+
+"""
+(==== bulka_jrwx ====)
+= sauce ingr_duyq =
+= sauce ingr_ychh =
+= sauce ingr_mivg =
+(==== bulka_jrwx ====)
+"""
